@@ -76,7 +76,6 @@ export default function ChatroomManager() {
   };
 
   const handleDelete = async (id: string) => {
-    if (!window.confirm('Delete this chatroom and all messages?')) return;
     try {
       const token = localStorage.getItem('token');
       const res = await fetch(`http://127.0.0.1:5000/api/chatrooms/${id}`, {
@@ -112,10 +111,8 @@ export default function ChatroomManager() {
   };
 
   const banUser = (userId: string) => {
-    if (window.confirm('Ban this user? Their account will be restricted.')) {
-      if (monitoringRoom && socketRef.current) {
-        socketRef.current.emit('admin_ban_user', { userId, roomId: monitoringRoom._id });
-      }
+    if (monitoringRoom && socketRef.current) {
+      socketRef.current.emit('admin_ban_user', { userId, roomId: monitoringRoom._id });
     }
   };
 

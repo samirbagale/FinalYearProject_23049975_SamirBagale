@@ -150,7 +150,6 @@ const AdminDashboard = () => {
   };
 
   const deleteGratitude = async (id: string) => {
-    if (!window.confirm("Are you sure you want to delete this recovery journal entry?")) return;
     try {
       const token = localStorage.getItem('token');
       if (!token) return;
