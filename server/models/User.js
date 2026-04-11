@@ -37,6 +37,27 @@ const userSchema = new mongoose.Schema({
         type: Boolean,
         default: false
     },
+    // Psychiatrist Profile Fields
+    credentials: { type: String },
+    experience: { type: Number }, // in years
+    rating: { type: Number, default: 4.8 },
+    sessions: { type: Number, default: 100 },
+    languages: { type: String, default: 'English, Nepali' },
+    specialties: [{ type: String }],
+    bio: { type: String },
+    quote: { type: String },
+    approaches: [{ type: String }],
+    education: [{ 
+        degree: String,
+        institute: String
+    }],
+    helps: [{ type: String }],
+    stats: [{
+        value: String,
+        label: String
+    }],
+    profilePhoto: { type: String },
+    gradient: { type: String, default: 'linear-gradient(135deg, #a78bfa, #7c3aed)' },
     createdAt: { type: Date, default: Date.now }
 });
 
