@@ -1,7 +1,8 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '@/contexts/AuthContext'
 import { SignupData } from '@/types'
+import { Mail, User, Lock, Calendar, Eye, EyeOff, CheckCircle2, ShieldCheck, ArrowRight, Loader2 } from 'lucide-react'
 
 const Signup = () => {
   const [formData, setFormData] = useState<SignupData>({
@@ -18,12 +19,16 @@ const Signup = () => {
   const navigate = useNavigate()
 
   const [showPassword, setShowPassword] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError('')
 
-    // Validation
     if (!formData.agreeToTerms) {
       setError('You must agree to the Terms & Privacy Policy')
       return
@@ -34,7 +39,6 @@ const Signup = () => {
       return
     }
 
-    // Age validation (must be 13+)
     const birthDate = new Date(formData.dateOfBirth)
     const today = new Date()
     const age = today.getFullYear() - birthDate.getFullYear()
@@ -61,159 +65,207 @@ const Signup = () => {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8">
-        <div>
-          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-            Create your Mind Care account
-          </h2>
-          <p className="mt-2 text-center text-sm text-gray-600">
-            Already have an account?{' '}
-            <Link to="/login" className="font-medium text-primary-600 hover:text-primary-500">
-              Sign in
-            </Link>
-          </p>
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-sky-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 font-sans">
+      <div className={`max-w-md w-full transition-all duration-700 transform ${isMounted ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'}`}>
+        {/* Logo/Illustration Placeholder */}
+        <div className="flex justify-center mb-8">
+          <div className="w-16 h-16 bg-primary-600 rounded-2xl flex items-center justify-center shadow-lg shadow-primary-200 animate-bounce-gentle">
+            <ShieldCheck className="w-10 h-10 text-white" />
+          </div>
         </div>
-        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
-          {error && (
-            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded">
-              {error}
-            </div>
-          )}
 
-          <div className="space-y-4">
-            <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-                Email Address
-              </label>
-              <input
-                id="email"
-                name="email"
-                type="email"
-                required
-                className="mt-1 appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm"
-                placeholder="your.email@example.com"
-                value={formData.email}
-                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-              />
+        <div className="bg-white/80 backdrop-blur-xl rounded-[32px] shadow-2xl shadow-blue-100/50 border border-white p-8 md:p-10 relative overflow-hidden">
+          <div className="relative z-10">
+            <div className="text-center mb-10">
+              <h2 className="text-3xl font-black text-slate-900 tracking-tight mb-3">
+                Create your Mind Care account
+              </h2>
+              <p className="text-slate-500 font-medium">
+                Join a safe and supportive mental health community
+              </p>
             </div>
 
-            <div>
-              <label htmlFor="username" className="block text-sm font-medium text-gray-700">
-                Username
-              </label>
-              <input
-                id="username"
-                name="username"
-                type="text"
-                required
-                className="mt-1 appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm"
-                placeholder="Choose a username"
-                value={formData.username}
-                onChange={(e) => setFormData({ ...formData, username: e.target.value })}
-              />
-            </div>
+            <form className="space-y-6" onSubmit={handleSubmit}>
+              {error && (
+                <div className="bg-red-50 border border-red-100 text-red-600 px-4 py-3.5 rounded-2xl text-sm font-bold flex items-center gap-3 animate-in fade-in slide-in-from-top-2 duration-300">
+                  <div className="w-2 h-2 bg-red-400 rounded-full animate-pulse" />
+                  {error}
+                </div>
+              )}
 
+              <div className="space-y-5">
+                {/* Email Field */}
+                <div>
+                  <label htmlFor="email" className="block text-[13px] font-bold text-slate-700 ml-1 mb-2">
+                    Email Address
+                  </label>
+                  <div className="relative group">
+                    <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none transition-colors group-focus-within:text-primary-500 text-slate-400">
+                      <Mail className="h-5 w-5" />
+                    </div>
+                    <input
+                      id="email"
+                      name="email"
+                      type="email"
+                      required
+                      className="block w-full pl-12 pr-4 py-3.5 bg-slate-50 border border-slate-200 placeholder-slate-400 text-slate-900 rounded-2xl focus:outline-none focus:ring-4 focus:ring-primary-100 focus:border-primary-500 transition-all font-medium"
+                      placeholder="name@example.com"
+                      value={formData.email}
+                      onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                    />
+                  </div>
+                </div>
 
-            <div className="relative">
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700">
-                Password
-              </label>
-              <div className="mt-1 relative">
-                <input
-                  id="password"
-                  name="password"
-                  type={showPassword ? 'text' : 'password'}
-                  required
-                  minLength={6}
-                  className="appearance-none block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm pr-10"
-                  placeholder="Minimum 6 characters"
-                  value={formData.password}
-                  onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                />
+                {/* Username Field */}
+                <div>
+                  <label htmlFor="username" className="block text-[13px] font-bold text-slate-700 ml-1 mb-2">
+                    Username
+                  </label>
+                  <div className="relative group">
+                    <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none transition-colors group-focus-within:text-primary-500 text-slate-400">
+                      <User className="h-5 w-5" />
+                    </div>
+                    <input
+                      id="username"
+                      name="username"
+                      type="text"
+                      required
+                      className="block w-full pl-12 pr-4 py-3.5 bg-slate-50 border border-slate-200 placeholder-slate-400 text-slate-900 rounded-2xl focus:outline-none focus:ring-4 focus:ring-primary-100 focus:border-primary-500 transition-all font-medium"
+                      placeholder="Choose a username"
+                      value={formData.username}
+                      onChange={(e) => setFormData({ ...formData, username: e.target.value })}
+                    />
+                  </div>
+                </div>
+
+                {/* Password Field */}
+                <div>
+                  <label htmlFor="password" throws-error="true" className="block text-[13px] font-bold text-slate-700 ml-1 mb-2">
+                    Password
+                  </label>
+                  <div className="relative group">
+                    <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none transition-colors group-focus-within:text-primary-500 text-slate-400">
+                      <Lock className="h-5 w-5" />
+                    </div>
+                    <input
+                      id="password"
+                      name="password"
+                      type={showPassword ? 'text' : 'password'}
+                      required
+                      minLength={6}
+                      className="block w-full pl-12 pr-12 py-3.5 bg-slate-50 border border-slate-200 placeholder-slate-400 text-slate-900 rounded-2xl focus:outline-none focus:ring-4 focus:ring-primary-100 focus:border-primary-500 transition-all font-medium"
+                      placeholder="Minimum 6 characters"
+                      value={formData.password}
+                      onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                    />
+                    <button
+                      type="button"
+                      className="absolute inset-y-0 right-0 pr-4 flex items-center text-slate-400 hover:text-primary-600 transition-colors"
+                      onClick={() => setShowPassword(!showPassword)}
+                    >
+                      {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                    </button>
+                  </div>
+                </div>
+
+                {/* DOB Field */}
+                <div>
+                  <label htmlFor="dateOfBirth" className="block text-[13px] font-bold text-slate-700 ml-1 mb-2">
+                    Date of Birth
+                  </label>
+                  <div className="relative group">
+                    <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none transition-colors group-focus-within:text-primary-500 text-slate-400">
+                      <Calendar className="h-5 w-5" />
+                    </div>
+                    <input
+                      id="dateOfBirth"
+                      name="dateOfBirth"
+                      type="date"
+                      required
+                      className="block w-full pl-12 pr-4 py-3.5 bg-slate-50 border border-slate-200 text-slate-900 rounded-2xl focus:outline-none focus:ring-4 focus:ring-primary-100 focus:border-primary-500 transition-all font-medium"
+                      value={formData.dateOfBirth}
+                      onChange={(e) => setFormData({ ...formData, dateOfBirth: e.target.value })}
+                    />
+                  </div>
+                  <p className="mt-2 text-[11px] font-bold text-slate-400 ml-1 uppercase tracking-wider">Must be 13+ years old</p>
+                </div>
+              </div>
+
+              {/* Checkboxes */}
+              <div className="space-y-4 pt-2">
+                <label className="flex items-start gap-3 group cursor-pointer">
+                  <div className="relative flex items-center h-5">
+                    <input
+                      id="agreeToTerms"
+                      type="checkbox"
+                      checked={formData.agreeToTerms}
+                      onChange={(e) => setFormData({ ...formData, agreeToTerms: e.target.checked })}
+                      className="peer h-5 w-5 rounded-lg border-2 border-slate-200 text-primary-600 focus:ring-0 transition-all cursor-pointer opacity-0 absolute z-10"
+                    />
+                    <div className={`h-5 w-5 rounded-lg border-2 border-slate-200 transition-all flex items-center justify-center ${formData.agreeToTerms ? 'bg-primary-600 border-primary-600' : 'bg-white group-hover:border-primary-400'}`}>
+                      {formData.agreeToTerms && <CheckCircle2 className="w-3.5 h-3.5 text-white" />}
+                    </div>
+                  </div>
+                  <span className="text-sm font-medium text-slate-600 leading-tight">
+                    I agree to the <Link to="/terms" className="text-primary-600 font-bold hover:underline">Terms & Privacy Policy</Link>
+                  </span>
+                </label>
+
+                <label className="flex items-start gap-3 group cursor-pointer">
+                  <div className="relative flex items-center h-5">
+                    <input
+                      id="agreeToCrisisStatement"
+                      type="checkbox"
+                      checked={formData.agreeToCrisisStatement}
+                      onChange={(e) => setFormData({ ...formData, agreeToCrisisStatement: e.target.checked })}
+                      className="peer h-5 w-5 rounded-lg border-2 border-slate-200 text-primary-600 focus:ring-0 transition-all cursor-pointer opacity-0 absolute z-10"
+                    />
+                    <div className={`h-5 w-5 rounded-lg border-2 border-slate-200 transition-all flex items-center justify-center shrink-0 ${formData.agreeToCrisisStatement ? 'bg-primary-600 border-primary-600' : 'bg-white group-hover:border-primary-400'}`}>
+                      {formData.agreeToCrisisStatement && <CheckCircle2 className="w-3.5 h-3.5 text-white" />}
+                    </div>
+                  </div>
+                  <span className="text-sm font-medium text-slate-600 leading-tight">
+                    I confirm that I am not currently in crisis or planning to harm myself or others
+                  </span>
+                </label>
+              </div>
+
+              <div>
                 <button
-                  type="button"
-                  className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-500"
-                  onClick={() => setShowPassword(!showPassword)}
+                  type="submit"
+                  disabled={isLoading}
+                  className="group relative w-full flex items-center justify-center py-4 bg-gradient-to-r from-primary-600 to-indigo-600 hover:from-primary-700 hover:to-indigo-700 text-white text-base font-black rounded-2xl shadow-xl shadow-primary-200 transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 border-none"
                 >
-                  {showPassword ? (
-                    <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858-5.908a9.049 9.049 0 018.891 8.891 8.268 2.943 9.543 7 9.97 9.97 0 01-1.563 3.029m-5.858 5.908A9.049 9.049 0 0112 5c4.478 0 8.268 2.943 9.543 7a9.97 9.97 0 01-1.563 3.029" />
-                      <line x1="3" y1="1" x2="21" y2="21" />
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                    </svg>
+                  {isLoading ? (
+                    <Loader2 className="w-6 h-6 animate-spin mr-2" />
                   ) : (
-                    <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                    </svg>
+                    <>
+                      Create Account
+                      <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
+                    </>
                   )}
                 </button>
               </div>
-            </div>
+            </form>
 
-            <div>
-              <label htmlFor="dateOfBirth" className="block text-sm font-medium text-gray-700">
-                Date of Birth
-              </label>
-              <input
-                id="dateOfBirth"
-                name="dateOfBirth"
-                type="date"
-                required
-                className="mt-1 appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm"
-                value={formData.dateOfBirth}
-                onChange={(e) => setFormData({ ...formData, dateOfBirth: e.target.value })}
-              />
-              <p className="mt-1 text-xs text-gray-500">Must be at least 13 years old</p>
-            </div>
-          </div>
-
-          <div className="space-y-3">
-            <div className="flex items-start">
-              <input
-                id="agreeToTerms"
-                name="agreeToTerms"
-                type="checkbox"
-                checked={formData.agreeToTerms}
-                onChange={(e) => setFormData({ ...formData, agreeToTerms: e.target.checked })}
-                className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded mt-1"
-              />
-              <label htmlFor="agreeToTerms" className="ml-2 block text-sm text-gray-700">
-                I agree to the{' '}
-                <Link to="/terms" className="text-primary-600 hover:text-primary-500">
-                  Terms & Privacy Policy
+            <div className="mt-8 text-center">
+              <p className="text-slate-500 font-medium">
+                Already have an account?{' '}
+                <Link to="/login" className="text-primary-600 font-black hover:underline underline-offset-4">
+                  Sign in
                 </Link>
-              </label>
-            </div>
-
-            <div className="flex items-start">
-              <input
-                id="agreeToCrisisStatement"
-                name="agreeToCrisisStatement"
-                type="checkbox"
-                checked={formData.agreeToCrisisStatement}
-                onChange={(e) =>
-                  setFormData({ ...formData, agreeToCrisisStatement: e.target.checked })
-                }
-                className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded mt-1"
-              />
-              <label htmlFor="agreeToCrisisStatement" className="ml-2 block text-sm text-gray-700">
-                I confirm that I am not currently in crisis or planning to harm myself or others
-              </label>
+              </p>
             </div>
           </div>
 
-          <div>
-            <button
-              type="submit"
-              disabled={isLoading}
-              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {isLoading ? 'Creating account...' : 'Create Account'}
-            </button>
-          </div>
-        </form>
+          {/* Subtle Background Decoration */}
+          <div className="absolute top-0 right-0 -m-8 w-32 h-32 bg-primary-100 rounded-full blur-3xl opacity-50 select-none pointer-events-none" />
+          <div className="absolute bottom-0 left-0 -m-8 w-32 h-32 bg-blue-100 rounded-full blur-3xl opacity-50 select-none pointer-events-none" />
+        </div>
+        
+        <p className="text-center mt-8 text-slate-400 text-xs font-semibold uppercase tracking-widest pointer-events-none">
+          SECURE & CONFIDENTIAL • © 2026 Mind Care
+        </p>
       </div>
     </div>
   )

@@ -49,7 +49,6 @@ export default function ForumManager() {
   };
 
   const deletePost = async (id: string) => {
-    if (!window.confirm('Delete this forum post completely?')) return;
     try {
       const token = localStorage.getItem('token');
       const res = await fetch(`http://127.0.0.1:5000/api/forum/posts/${id}`, {
@@ -61,7 +60,6 @@ export default function ForumManager() {
   };
 
   const deleteComment = async (id: string) => {
-    if (!window.confirm('Delete this comment?')) return;
     try {
       const token = localStorage.getItem('token');
       const res = await fetch(`http://127.0.0.1:5000/api/forum/comments/${id}`, {
