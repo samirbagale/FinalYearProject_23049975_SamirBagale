@@ -33,9 +33,21 @@ router.post('/upload-photo', protect, upload.single('photo'), async (req, res) =
     }
 });
 
+const Transaction = require('../models/Transaction');
+
 router.post('/upgrade-premium', protect, async (req, res) => {
     try {
+        const { gateway, mobileNumber } = req.body;
         const user = await User.findByIdAndUpdate(req.user.id, { isPremium: true }, { new: true });
+        
+        // Log transaction
+        await Transaction.create({
+            user: req.user.id,
+            gateway: gateway || 'simulated',
+            mobileNumber,
+            refId: 'REF-' + Math.random().toString(36).substring(7).toUpperCase()
+        });
+
         res.json({ success: true, isPremium: user.isPremium });
     } catch (error) {
         console.error(error);
