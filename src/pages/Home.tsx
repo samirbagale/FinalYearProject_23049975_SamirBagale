@@ -150,13 +150,13 @@ const Home = () => {
           <div className="flex flex-col sm:flex-row justify-center items-center gap-4 pt-4">
             <Link
               to="/chat"
-              className="px-8 py-4 bg-[#0f172a] text-white font-bold text-sm tracking-widest uppercase rounded-full shadow-lg hover:shadow-xl hover:bg-slate-800 hover:scale-105 transition-all duration-300 transform"
+              className="px-8 py-4 bg-white/15 backdrop-blur-md border border-white/30 text-white font-black text-sm tracking-widest uppercase rounded-full shadow-2xl hover:bg-white/25 hover:scale-105 transition-all duration-300 transform"
             >
               Talk to AI Now
             </Link>
             <Link
               to="/mood-tracking"
-              className="px-8 py-4 bg-[#0f172a] text-white font-bold text-sm tracking-widest uppercase rounded-full shadow-lg hover:shadow-xl hover:bg-slate-800 transition-all duration-300 backdrop-blur-sm"
+              className="px-8 py-4 bg-white/15 backdrop-blur-md border border-white/30 text-white font-black text-sm tracking-widest uppercase rounded-full shadow-2xl hover:bg-white/25 hover:scale-105 transition-all duration-300 transform"
             >
               Track Your Mood
             </Link>
@@ -197,7 +197,8 @@ const Home = () => {
                     {todayMood && (
                         <button
                             onClick={handleMoodSubmit}
-                            className="w-full mt-6 py-4 rounded-2xl bg-[#0f172a] text-white font-bold text-sm tracking-widest uppercase shadow-xl hover:bg-slate-800 hover:-translate-y-0.5 transition-all duration-200 animate-fade-in"
+                            style={{ background: 'linear-gradient(to right, #1E90FF, #0077B6)' }}
+                            className="w-full mt-6 py-4 rounded-2xl text-white font-black text-sm tracking-widest uppercase shadow-xl hover:shadow-[#1E90FF]/25 hover:-translate-y-0.5 transition-all duration-200 animate-fade-in"
                         >
                             Log My Mood
                         </button>
@@ -225,7 +226,8 @@ const Home = () => {
                     <div className="flex gap-3 mt-6">
                         <button 
                             onClick={() => navigate('/chat')}
-                            className="flex-1 py-3 rounded-xl bg-[#0f172a] text-white text-xs font-bold tracking-widest uppercase hover:bg-slate-800 transition-all shadow-md"
+                            style={{ background: 'linear-gradient(to right, #1E90FF, #0077B6)' }}
+                            className="flex-1 py-3 rounded-xl text-white text-xs font-black tracking-widest uppercase hover:opacity-90 transition-all shadow-md shadow-blue-500/10"
                         >
                             Open AI Chat →
                         </button>
@@ -420,9 +422,10 @@ const Home = () => {
                         setBreathPhase("ready")
                     }
                 }}
+                style={!breathing ? { background: 'linear-gradient(to right, #1E90FF, #0077B6)' } : {}}
                 className={`w-full py-4 rounded-2xl font-black text-sm tracking-widest uppercase transition-all duration-300 ${
                     !breathing 
-                    ? "bg-[#0f172a] text-white shadow-xl hover:-translate-y-1 hover:bg-slate-800" 
+                    ? "text-white shadow-xl hover:-translate-y-1" 
                     : "bg-slate-200 text-slate-500"
                 }`}
             >
@@ -460,7 +463,7 @@ const Home = () => {
                         Connect safely with compassionate listeners who understand what you're going through. It's completely free, anonymous, and available right now.
                     </p>
                 </div>
-                <Link to="/chat" className="relative z-10 inline-block px-8 py-4 rounded-full bg-[#0f172a] text-white font-bold text-sm tracking-widest uppercase hover:bg-slate-800 hover:-translate-y-1 transition-all duration-300 shadow-lg">
+                <Link to="/chat" style={{ background: 'linear-gradient(to right, #1E90FF, #0077B6)' }} className="relative z-10 inline-block px-8 py-4 rounded-full text-white font-black text-sm tracking-widest uppercase hover:scale-105 hover:-translate-y-1 transition-all duration-300 shadow-lg shadow-blue-500/10">
                     Chat Now
                 </Link>
             </div>
@@ -480,7 +483,7 @@ const Home = () => {
                         Take the next step with a licensed psychiatrist or therapist. Confidential, professional sessions at a fraction of the traditional cost.
                     </p>
                 </div>
-                <Link to="/premium" className="relative z-10 inline-block px-8 py-4 rounded-full bg-[#0f172a] text-white font-bold text-sm tracking-widest uppercase hover:bg-slate-800 hover:-translate-y-1 transition-all duration-300 shadow-lg">
+                <Link to="/premium" style={{ background: 'linear-gradient(to right, #1E90FF, #0077B6)' }} className="relative z-10 inline-block px-8 py-4 rounded-full text-white font-black text-sm tracking-widest uppercase hover:scale-105 hover:-translate-y-1 transition-all duration-300 shadow-lg shadow-blue-500/10">
                     Book Session
                 </Link>
             </div>
@@ -663,10 +666,11 @@ const Home = () => {
                       <button
                         type="submit"
                         disabled={submitting}
+                        style={!submitting ? { background: 'linear-gradient(to right, #1E90FF, #0077B6)' } : {}}
                         className={`w-full py-4 rounded-2xl font-black text-sm tracking-widest uppercase text-white mt-6 shadow-lg transition-all duration-200 flex items-center justify-center gap-2 ${
                           submitting 
-                          ? 'bg-slate-300 cursor-not-allowed' 
-                          : 'bg-[#0f172a] hover:bg-slate-800 hover:-translate-y-0.5 pointer-events-auto'
+                          ? 'bg-slate-300 cursor-not-allowed shadow-none' 
+                          : 'hover:opacity-90 hover:-translate-y-0.5'
                         }`}
                       >
                         {submitting ? (
@@ -771,7 +775,8 @@ const Home = () => {
             <div className="absolute inset-0 rounded-full bg-indigo-500 animate-ping opacity-20 pointer-events-none group-hover:hidden"></div>
             <button 
                 onClick={() => navigate('/chat')}
-                className="flex items-center gap-2 bg-[#0f172a] text-white p-4 rounded-full shadow-2xl hover:bg-slate-800 hover:-translate-y-2 transition-all duration-300 group overflow-hidden"
+                style={{ background: 'linear-gradient(to right, #1E90FF, #0077B6)' }}
+                className="flex items-center gap-2 text-white p-4 rounded-full shadow-2xl hover:scale-110 hover:-translate-y-2 transition-all duration-300 group overflow-hidden"
             >
                 <span className="text-2xl">💬</span>
                 <span className="max-w-0 group-hover:max-w-xs overflow-hidden whitespace-nowrap transition-all duration-500 text-sm font-black uppercase tracking-widest pl-0 group-hover:pl-2">
