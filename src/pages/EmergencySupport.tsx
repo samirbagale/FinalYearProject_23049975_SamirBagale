@@ -6,11 +6,16 @@ const EmergencySupport = () => {
 
     // --- STATE ---
     const [planSaved, setPlanSaved] = useState(false)
-    const [warnings, setWarnings] = useState<string[]>([])
-    const [helpers, setHelpers] = useState<string[]>([])
     const [contact1, setContact1] = useState('')
     const [contact2, setContact2] = useState('')
+    const [contact3, setContact3] = useState('')
+    const [warnings, setWarnings] = useState<string[]>([])
+    const [customWarning, setCustomWarning] = useState('')
+    const [helpers, setHelpers] = useState<string[]>([])
+    const [safeSpace1, setSafeSpace1] = useState('')
+    const [safeSpace2, setSafeSpace2] = useState('')
     const [safePlace, setSafePlace] = useState('')
+    const [showSummary, setShowSummary] = useState(false)
 
     const [breathRunning, setBreathRunning] = useState(false)
     const [breathPhase, setBreathPhase] = useState('ready')
@@ -25,6 +30,48 @@ const EmergencySupport = () => {
 
     const breathRef = useRef<any>(null)
     const timerRef = useRef<any>(null)
+
+    // --- PERSISTENCE: LOAD ON MOUNT ---
+    useEffect(() => {
+        const savedData = localStorage.getItem('mindcare_safety_plan')
+        if (savedData) {
+            try {
+                const data = JSON.parse(savedData)
+                setContact1(data.contact1 || '')
+                setContact2(data.contact2 || '')
+                setContact3(data.contact3 || '')
+                setWarnings(data.warnings || [])
+                setCustomWarning(data.customWarning || '')
+                setHelpers(data.helpers || [])
+                setSafeSpace1(data.safeSpace1 || '')
+                setSafeSpace2(data.safeSpace2 || '')
+                setSafePlace(data.safePlace || '')
+                if (data.updatedAt) setShowSummary(true)
+            } catch (e) {
+                console.error("Error loading safety plan", e)
+            }
+        }
+    }, [])
+
+    // --- PERSISTENCE: SAVE HANDLER ---
+    const handleSavePlan = () => {
+        const planData = {
+            contact1,
+            contact2,
+            contact3,
+            warnings,
+            customWarning,
+            helpers,
+            safeSpace1,
+            safeSpace2,
+            safePlace,
+            updatedAt: new Date().toISOString()
+        }
+        localStorage.setItem('mindcare_safety_plan', JSON.stringify(planData))
+        setPlanSaved(true)
+        setShowSummary(true)
+        setTimeout(() => setPlanSaved(false), 2000)
+    }
 
     // --- BREATHING LOGIC (4-7-8) ---
     useEffect(() => {
@@ -223,56 +270,107 @@ const EmergencySupport = () => {
                     </div>
 
                     <div className="relative z-10 space-y-6">
-                        {/* Progressive Step Cards */}
-                        {[
-                            { step: 1, title: "Trusted Contacts", desc: "Two people you can call right now", content: (
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
-                                    <input value={contact1} onChange={(e)=>setContact1(e.target.value)} type="text" placeholder="Name & Phone Number 1" className="bg-slate-50 border border-slate-100 px-5 py-4 rounded-2xl text-slate-900 font-bold text-sm focus:bg-white focus:ring-4 focus:ring-blue-100 outline-none transition-all placeholder:text-slate-300" />
-                                    <input value={contact2} onChange={(e)=>setContact2(e.target.value)} type="text" placeholder="Name & Phone Number 2" className="bg-slate-50 border border-slate-100 px-5 py-4 rounded-2xl text-slate-900 font-bold text-sm focus:bg-white focus:ring-4 focus:ring-blue-100 outline-none transition-all placeholder:text-slate-300" />
+                        {/* Step 1: Trusted Contacts */}
+                        <div className="bg-white border border-slate-100 rounded-[2rem] p-8 shadow-sm hover:shadow-md transition-all">
+                            <div className="flex items-center gap-4 mb-6">
+                                <div className="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 font-black flex items-center justify-center text-sm">1</div>
+                                <div>
+                                    <h3 className="text-slate-900 font-black text-lg leading-none">Trusted Contacts</h3>
+                                    <p className="text-slate-400 text-xs font-bold mt-1.5 uppercase tracking-wide">Name 3 people you can call right now</p>
                                 </div>
-                            )},
-                            { step: 2, title: "Warning Signs", desc: "Common indicators that you need support", content: (
-                                <div className="flex flex-wrap gap-2.5 mt-4">
-                                    {["Racing thoughts", "Isolation", "Sleep issues", "Hopelessness", "High agitation"].map(s => (
-                                        <div key={s} onClick={()=>toggleArray(s, warnings, setWarnings)} className={`px-5 py-2.5 rounded-full border-2 text-xs font-bold cursor-pointer transition-all ${warnings.includes(s) ? 'bg-blue-600 border-blue-600 text-white shadow-lg shadow-blue-200' : 'bg-white border-slate-100 text-slate-400 hover:border-blue-200'}`}>
-                                            {s}
-                                        </div>
-                                    ))}
-                                </div>
-                            )},
-                            { step: 3, title: "Coping Strategies", desc: "Small actions that help you ground yourself", content: (
-                                <div className="flex flex-wrap gap-2.5 mt-4">
-                                    {["Deep breath", "Cold wash", "Go outside", "Call friend", "Soft music"].map(h => (
-                                        <div key={h} onClick={()=>toggleArray(h, helpers, setHelpers)} className={`px-5 py-2.5 rounded-full border-2 text-xs font-bold cursor-pointer transition-all ${helpers.includes(h) ? 'bg-emerald-500 border-emerald-500 text-white shadow-lg shadow-emerald-200' : 'bg-white border-slate-100 text-slate-400 hover:border-emerald-200'}`}>
-                                            {h}
-                                        </div>
-                                    ))}
-                                </div>
-                            )},
-                            { step: 4, title: "Your Safe Haven", desc: "Describe your ideal physical or mental safe space", content: (
-                                <textarea rows={3} value={safePlace} onChange={(e)=>setSafePlace(e.target.value)} placeholder="e.g. My study with warm lighting and the sound of rain..." className="w-full mt-4 bg-slate-50 border border-slate-100 px-6 py-5 rounded-2xl text-slate-900 font-bold text-sm focus:bg-white focus:ring-4 focus:ring-blue-100 outline-none transition-all placeholder:text-slate-300 resize-none"></textarea>
-                            )}
-                        ].map(item => (
-                            <div key={item.step} className="bg-white border border-slate-100 rounded-[2rem] p-8 shadow-sm hover:shadow-md transition-all">
-                                <div className="flex items-center gap-4">
-                                     <div className="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 font-black flex items-center justify-center text-sm">{item.step}</div>
-                                     <div>
-                                        <h3 className="text-slate-900 font-black text-lg leading-none">{item.title}</h3>
-                                        <p className="text-slate-400 text-xs font-bold mt-1.5 uppercase tracking-wide">{item.desc}</p>
-                                     </div>
-                                </div>
-                                {item.content}
                             </div>
-                        ))}
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                <input value={contact1} onChange={(e)=>setContact1(e.target.value)} type="text" placeholder="Contact 1 (Name & Phone)" className="bg-slate-50 border border-slate-100 px-5 py-4 rounded-2xl text-slate-900 font-bold text-sm focus:bg-white focus:ring-4 focus:ring-blue-100 outline-none transition-all placeholder:text-slate-300" />
+                                <input value={contact2} onChange={(e)=>setContact2(e.target.value)} type="text" placeholder="Contact 2 (Name & Phone)" className="bg-slate-50 border border-slate-100 px-5 py-4 rounded-2xl text-slate-900 font-bold text-sm focus:bg-white focus:ring-4 focus:ring-blue-100 outline-none transition-all placeholder:text-slate-300" />
+                                <input value={contact3} onChange={(e)=>setContact3(e.target.value)} type="text" placeholder="Contact 3 (Name & Phone)" className="bg-slate-50 border border-slate-100 px-5 py-4 rounded-2xl text-slate-900 font-bold text-sm focus:bg-white focus:ring-4 focus:ring-blue-100 outline-none transition-all placeholder:text-slate-300" />
+                            </div>
+                        </div>
+
+                        {/* Step 2: Warning Signs */}
+                        <div className="bg-white border border-slate-100 rounded-[2rem] p-8 shadow-sm hover:shadow-md transition-all">
+                            <div className="flex items-center gap-4 mb-6">
+                                <div className="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 font-black flex items-center justify-center text-sm">2</div>
+                                <div>
+                                    <h3 className="text-slate-900 font-black text-lg leading-none">Warning Signs</h3>
+                                    <p className="text-slate-400 text-xs font-bold mt-1.5 uppercase tracking-wide">Select or write signs that indicate you need help</p>
+                                </div>
+                            </div>
+                            <div className="flex flex-wrap gap-2.5 mb-4">
+                                {["Racing thoughts", "Isolation", "Sleep issues", "Hopelessness", "High agitation"].map(s => (
+                                    <div key={s} onClick={()=>toggleArray(s, warnings, setWarnings)} className={`px-5 py-2.5 rounded-full border-2 text-xs font-bold cursor-pointer transition-all ${warnings.includes(s) ? 'bg-blue-600 border-blue-600 text-white shadow-lg shadow-blue-200' : 'bg-white border-slate-100 text-slate-400 hover:border-blue-200'}`}>
+                                        {s}
+                                    </div>
+                                ))}
+                            </div>
+                            <input value={customWarning} onChange={(e)=>setCustomWarning(e.target.value)} type="text" placeholder="Other signs (comma separated)" className="w-full bg-slate-50 border border-slate-100 px-5 py-4 rounded-2xl text-slate-900 font-bold text-sm focus:bg-white focus:ring-4 focus:ring-blue-100 outline-none transition-all placeholder:text-slate-300" />
+                        </div>
+
+                        {/* Step 3: Safe Spaces */}
+                        <div className="bg-white border border-slate-100 rounded-[2rem] p-8 shadow-sm hover:shadow-md transition-all">
+                            <div className="flex items-center gap-4 mb-6">
+                                <div className="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 font-black flex items-center justify-center text-sm">3</div>
+                                <div>
+                                    <h3 className="text-slate-900 font-black text-lg leading-none">Safe Spaces</h3>
+                                    <p className="text-slate-400 text-xs font-bold mt-1.5 uppercase tracking-wide">Describe where you feel physically or mentally safe</p>
+                                </div>
+                            </div>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                                <input value={safeSpace1} onChange={(e)=>setSafeSpace1(e.target.value)} type="text" placeholder="Safe Space 1 (e.g. My Room)" className="bg-slate-50 border border-slate-100 px-5 py-4 rounded-2xl text-slate-900 font-bold text-sm focus:bg-white focus:ring-4 focus:ring-blue-100 outline-none transition-all placeholder:text-slate-300" />
+                                <input value={safeSpace2} onChange={(e)=>setSafeSpace2(e.target.value)} type="text" placeholder="Safe Space 2 (e.g. Local Library)" className="bg-slate-50 border border-slate-100 px-5 py-4 rounded-2xl text-slate-900 font-bold text-sm focus:bg-white focus:ring-4 focus:ring-blue-100 outline-none transition-all placeholder:text-slate-300" />
+                            </div>
+                            <textarea rows={3} value={safePlace} onChange={(e)=>setSafePlace(e.target.value)} placeholder="Additional safe haven details (imagined or physical)..." className="w-full bg-slate-50 border border-slate-100 px-6 py-5 rounded-2xl text-slate-900 font-bold text-sm focus:bg-white focus:ring-4 focus:ring-blue-100 outline-none transition-all placeholder:text-slate-300 resize-none"></textarea>
+                        </div>
                     </div>
 
-                    <button onClick={() => {
-                        setPlanSaved(true)
-                        setTimeout(() => setPlanSaved(false), 2000)
-                    }} className={`w-full py-5 mt-10 rounded-[2rem] font-black tracking-widest uppercase text-sm transition-all shadow-xl active:scale-95 ${planSaved ? 'bg-emerald-500 text-white shadow-emerald-200' : 'bg-blue-600 text-white shadow-blue-200 hover:bg-blue-700'}`}>
-                        {planSaved ? "✓ Protocol Established" : "Save Safety Protocol"}
+                    <button onClick={handleSavePlan} className={`w-full py-5 mt-10 rounded-[2rem] font-black tracking-widest uppercase text-sm transition-all shadow-xl active:scale-95 ${planSaved ? 'bg-emerald-500 text-white shadow-emerald-200' : 'bg-blue-600 text-white shadow-blue-200 hover:bg-blue-700'}`}>
+                        {planSaved ? "✓ Protocol Established" : "Review & Save Protocol"}
                     </button>
                 </div>
+
+                {/* --- SAVED SUMMARY CARD --- */}
+                {showSummary && (
+                    <div className="mt-8 bg-white border border-emerald-100 rounded-[2.5rem] p-10 shadow-xl shadow-emerald-100/50 animate-fade-up">
+                        <div className="flex items-center gap-4 mb-8">
+                            <div className="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-xl">✅</div>
+                            <h3 className="text-xl font-black text-slate-900">Your Saved Protocol</h3>
+                        </div>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                            <div>
+                                <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3">Emergency Contacts</h4>
+                                <ul className="space-y-2">
+                                    {[contact1, contact2, contact3].filter(Boolean).map((c, i) => (
+                                        <li key={i} className="text-sm font-bold text-slate-700 flex items-center gap-2">
+                                            <span className="w-1.5 h-1.5 rounded-full bg-blue-500"></span> {c}
+                                        </li>
+                                    ))}
+                                    {![contact1, contact2, contact3].some(Boolean) && <li className="text-sm text-slate-400 italic">None listed</li>}
+                                </ul>
+                            </div>
+                            <div>
+                                <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3">Red Flags</h4>
+                                <div className="flex flex-wrap gap-2">
+                                    {warnings.map(w => (
+                                        <span key={w} className="px-3 py-1 bg-blue-50 text-blue-600 rounded-full text-[10px] font-bold">{w}</span>
+                                    ))}
+                                    {customWarning && <span className="px-3 py-1 bg-blue-50 text-blue-600 rounded-full text-[10px] font-bold">{customWarning}</span>}
+                                    {warnings.length === 0 && !customWarning && <span className="text-sm text-slate-400 italic">None listed</span>}
+                                </div>
+                            </div>
+                            <div className="md:col-span-2">
+                                <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3">Safe Havens</h4>
+                                <div className="flex flex-wrap gap-3">
+                                    {[safeSpace1, safeSpace2].filter(Boolean).map((s, i) => (
+                                        <div key={i} className="bg-slate-50 border border-slate-100 rounded-xl px-4 py-3 flex-1 min-w-[200px]">
+                                            <p className="text-xs font-bold text-slate-700">{s}</p>
+                                        </div>
+                                    ))}
+                                </div>
+                                {safePlace && <p className="mt-3 text-xs text-slate-500 leading-relaxed italic">{safePlace}</p>}
+                                {![safeSpace1, safeSpace2, safePlace].some(Boolean) && <p className="text-sm text-slate-400 italic">None listed</p>}
+                            </div>
+                        </div>
+                    </div>
+                )}
             </section>
 
             {/* --- SECTION 4: UPGRADED BREATHING --- */}
